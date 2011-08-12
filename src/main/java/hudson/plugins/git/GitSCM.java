@@ -128,6 +128,7 @@ public class GitSCM extends SCM implements Serializable {
     public String gitTool = null;
     private GitRepositoryBrowser browser;
     private Collection<SubmoduleConfig> submoduleCfg;
+    private boolean ignoreSubmodules;
     public static final String GIT_BRANCH = "GIT_BRANCH";
     public static final String GIT_COMMIT = "GIT_COMMIT";
     private String relativeTargetDir;
@@ -140,6 +141,10 @@ public class GitSCM extends SCM implements Serializable {
 
     public Collection<SubmoduleConfig> getSubmoduleCfg() {
         return submoduleCfg;
+    }
+
+    public boolean getIgnoreSubmodules() {
+        return ignoreSubmodules;
     }
 
     public void setSubmoduleCfg(Collection<SubmoduleConfig> submoduleCfg) {
@@ -164,7 +169,7 @@ public class GitSCM extends SCM implements Serializable {
                 createRepoList(repositoryUrl),
                 Collections.singletonList(new BranchSpec("")),
                 null,
-                false, Collections.<SubmoduleConfig>emptyList(), false,
+                false, Collections.<SubmoduleConfig>emptyList(), false, false,
                 false, new DefaultBuildChooser(), null, null, false, null,
                 null, null, null, false, false, false, null, null, false);
     }
@@ -177,6 +182,7 @@ public class GitSCM extends SCM implements Serializable {
             UserMergeOptions doMerge,
             Boolean doGenerateSubmoduleConfigurations,
             Collection<SubmoduleConfig> submoduleCfg,
+            boolean ignoreSubmodules,
             boolean clean,
             boolean wipeOutWorkspace,
             BuildChooser buildChooser, GitRepositoryBrowser browser,
@@ -224,6 +230,7 @@ public class GitSCM extends SCM implements Serializable {
             submoduleCfg = new ArrayList<SubmoduleConfig>();
         }
         this.submoduleCfg = submoduleCfg;
+        this.ignoreSubmodules = ignoreSubmodules;
 
         this.clean = clean;
         this.wipeOutWorkspace = wipeOutWorkspace;
@@ -1143,7 +1150,7 @@ public class GitSCM extends SCM implements Serializable {
                         throw new AbortException("Branch not suitable for integration as it does not merge cleanly");
                     }
 
-                    if (git.hasGitModules()) {
+                    if (git.hasGitModules() && !getIgnoreSubmodules()) {
                         // This ensures we don't miss changes to submodule paths and allows
                         // seamless use of bare and non-bare superproject repositories.
                         git.setupSubmoduleUrls(revToBuild, listener);
@@ -1193,7 +1200,7 @@ public class GitSCM extends SCM implements Serializable {
 
                     git.checkoutBranch(paramLocalBranch, revToBuild.getSha1().name());
 
-                    if (git.hasGitModules()) {
+                    if (git.hasGitModules() && !getIgnoreSubmodules()) {
                         // Git submodule update will only 'fetch' from where it
                         // regards as 'origin'. However,
                         // it is possible that we are building from a
@@ -1437,6 +1444,7 @@ public class GitSCM extends SCM implements Serializable {
             mergeOptions,
             req.getParameter("git.generate") != null,
             submoduleCfg,
+            req.getParameter("git.ignoreSubmodules") != null,
             req.getParameter("git.clean") != null,
             req.getParameter("git.wipeOutWorkspace") != null,
             req.bindJSON(BuildChooser.class,formData.getJSONObject("buildChooser")),

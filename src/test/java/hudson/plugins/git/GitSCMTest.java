@@ -511,7 +511,7 @@ public class GitSCMTest extends AbstractGitTestCase {
                 createRemoteRepositories(relativeTargetDir),
                 Collections.singletonList(new BranchSpec(branchString)),
                 null,
-                false, Collections.<SubmoduleConfig>emptyList(), false,
+                false, Collections.<SubmoduleConfig>emptyList(), false, false,
                 false, new DefaultBuildChooser(), null, null, authorOrCommitter, relativeTargetDir,
                 excludedRegions, excludedUsers, localBranch, false, false, fastRemotePoll, null, null, false));
         project.getBuildersList().add(new CaptureEnvironmentBuilder());

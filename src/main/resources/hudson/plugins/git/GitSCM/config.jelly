@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  
+
     <script><![CDATA[
     function encodeAllInputs(sep, form, field) {
         var inputs = Form.getInputs(form, null, field);
@@ -17,54 +17,54 @@
     ]]></script>
 
     <f:entry title="Repositories" help="/plugin/git/help.html">
-        
+
         <f:repeatable var="repo" name="repo" varStatus="repoStatus" items="${instance.repositories}" minimum="1" noAddButton="false">
            <table width="100%">
-           
+
            <f:entry title="URL of repository" field="url">
             <f:textbox value="${repo.URIs.get(0).toPrivateString()}" />
            </f:entry>
-           
+
            <f:advanced>
-           
+
 	           <f:entry title="Name of repository (blank to create default)" field="name">
 	             <f:textbox value="${repo.name}" />
 	           </f:entry>
-	           
-	           
+
+
 	           <f:entry title="Refspec (blank to create default)" field="refspec">
 	              <f:textbox value="${repo.fetchRefSpecs.get(0)}" />
 	           </f:entry>
-	           
+
            </f:advanced>
-           
+
            <f:entry>
             <div align="right">
                 <input type="button" value="Delete Repository" class="repeatable-delete" style="margin-left: 1em;" />
             </div>
           </f:entry>
           </table>
-          
+
         </f:repeatable>
    </f:entry>
-  
+
   <f:entry title="Branches to build" help="/plugin/git/branch.html">
   <f:repeatable var="branch" name="branches" varStatus="branchStatus" items="${instance.branches}" minimum="1" noAddButton="false">
            <table width="100%">
                <f:entry title="Branch Specifier (blank for default):" field="name">
                     <f:textbox value="${branch.name}" />
                </f:entry>
-               
+
                <f:entry>
             <div align="right">
                 <input type="button" value="Delete Branch" class="repeatable-delete" style="margin-left: 1em;" />
             </div>
           </f:entry>
-               
+
            </table>
-          
+
         </f:repeatable>
-  
+
   </f:entry>
 
   <f:advanced>
@@ -89,37 +89,37 @@
     <f:entry title="Config user.email Value" field="gitConfigEmail">
       <f:textbox />
     </f:entry>
-    
+
     <!-- This needs more thought
   <f:entry title="Autogenerate submodule configurations">
     <f:checkbox name="git.generate" checked="${scm.doGenerate}"/>
     <label class="attach-previous">Generate submodule configurations</label>
-    
+
     <f:repeatable var="smcfg" name="smcfg" varStatus="cfgStatus" items="${scm.submoduleCfg}" noAddButton="false">
            <table width="100%">
            <f:entry title="Name of submodule">
              <f:textbox name="git.submodule.name" value="${smcfg.submoduleName}" />
            </f:entry>
-           
+
            <f:entry title="Matching Branches">
             <f:textbox name="git.submodule.match" value="${smcfg.branchesString}" />
            </f:entry>
-           
-          
+
+
            <f:entry>
             <div align="right">
                 <input type="button" value="Delete" class="repeatable-delete" style="margin-left: 1em;" />
             </div>
           </f:entry>
           </table>
-          
+
         </f:repeatable>
-    
+
   </f:entry>
      -->
-     
+
 	  <f:entry title="Merge options" help="/plugin/git/merge.html">
-	  	
+
 		<table width="100%">
 		<f:optionalBlock field="doMerge"
 		                 title="${%Merge before build}"
@@ -136,7 +136,7 @@
 		 </f:entry>
 		</f:optionalBlock>
 		</table>
-	  	
+
 	  </f:entry>
 
           <f:entry title="Prune remote branches before build" field="pruneBranches" help="/plugin/git/prune.html">
@@ -191,7 +191,11 @@
               </j:forEach>
           </select>
       </f:entry>
+    <f:entry title="Ignore submodules" help="/plugin/git/ignoreSubmodules.html">
+      <f:checkbox name="git.ignoreSubmodules" checked="${scm.ignoreSubmodules}" />
+    </f:entry>
+
   </f:advanced>
-  
+
   <t:listScmBrowsers name="git.browser" />
 </j:jelly>
